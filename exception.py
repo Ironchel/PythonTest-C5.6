@@ -2,9 +2,10 @@ from extensions import ComputationBot
 
 
 class ApiException(Exception):
-
+    """The class is created to display user errors"""
     @staticmethod
     def check_number(number):
+        """The function checks the amount entered by the user"""
         try:
             if float(number) < 0:
                 pass
@@ -15,9 +16,10 @@ class ApiException(Exception):
 
 
 class ServerException(Exception):
-
+    """The class is created to display server errors"""
     @staticmethod
     def check_values():
+        """The function checks for errors connecting to the redis database"""
         try:
             check_values = ComputationBot.get_values()
             if not check_values:
@@ -29,6 +31,7 @@ class ServerException(Exception):
 
     @staticmethod
     def check_tracking():
+        """The function checks for errors connecting to the redis database"""
         try:
             check_tracking = ComputationBot.show_tracking()
             if not check_tracking:

@@ -11,9 +11,10 @@ cash = redis.Redis(
 
 
 class ComputationBot:
-
+    """Class for working with the redis database. Processes requests from the user, carries out currency exchange"""
     @staticmethod
     def show_tracking():
+        """The function will respond to the “show rate” request by reading data from the redis database"""
         tracking_eur = {'USD': 'доллар', 'UAH': 'гривна',
                         'RUB': 'рубль', 'CNY': 'юань', 'PLN': 'злотый',
                         'BTC': 'биткоин'}
@@ -46,6 +47,7 @@ class ComputationBot:
 
     @staticmethod
     def get_values():
+        """The function will respond to the request “List of currencies” by reading data from the redis database"""
         list_currencies = ''
         name_currencies = json.loads(cash.get('name_currencies'))
         for abbreviation, name in name_currencies['symbols'].items():
@@ -54,6 +56,7 @@ class ComputationBot:
 
     @staticmethod
     def check_currencies(curr):
+        """The function checks the presence of a currency in the redis database list"""
         course_currencies = json.loads(cash.get('course_currencies'))
         if (curr[0].upper() in course_currencies['rates'].keys() and
                 curr[1].upper() in course_currencies['rates'].keys()):
@@ -63,6 +66,7 @@ class ComputationBot:
 
     @staticmethod
     def calculation(calc):
+        """The function exchanges currencies at the user's request using data from the redis database"""
         course_currencies = json.loads(cash.get('course_currencies'))
         curr_1 = course_currencies['rates'][f'{calc[0].upper()}']
         curr_2 = course_currencies['rates'][f'{calc[1].upper()}']

@@ -12,6 +12,7 @@ commands = ['Показать курс', 'Обмен валют', 'Список 
 
 @megiron_bot.message_handler(commands=['start'])
 def main_menu(message):
+    """Command function /start in telegram bot. Displays the main window with buttons"""
     markur = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button_1 = types.KeyboardButton('Показать курс')
     button_2 = types.KeyboardButton('Обмен валют')
@@ -25,6 +26,7 @@ def main_menu(message):
 
 @megiron_bot.message_handler(commands=['help'])
 def help_menu(message):
+    """Command function /help in telegram bot. Shows instructions for using the bot"""
     megiron_bot.send_message(message.chat.id,
                              text="Валюта указывается тремя латинскими буквами!\n"
                                   "Нельзя обменивать одну и туже валют!\n\n"
@@ -43,6 +45,7 @@ def help_menu(message):
 
 @megiron_bot.message_handler(commands=['values'])
 def values_list(message):
+    """Command function /values in telegram bot. Displays a list of available currencies"""
     try:
         check_values = ServerException.check_values()
         megiron_bot.send_message(message.chat.id,
@@ -54,6 +57,7 @@ def values_list(message):
 
 @megiron_bot.message_handler(content_types=['text'])
 def antwort(message):
+    """Function for text in telegram bot. Interacts with the user and responds to user requests"""
     if message.text == 'Список валют':
         try:
             check_values = ServerException.check_values()

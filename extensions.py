@@ -12,38 +12,28 @@ cash = redis.Redis(
 
 class ComputationBot:
     """Class for working with the redis database. Processes requests from the user, carries out currency exchange"""
+
     @staticmethod
     def show_tracking():
         """The function will respond to the “show rate” request by reading data from the redis database"""
-        tracking_eur = {'USD': 'доллар', 'UAH': 'гривна',
-                        'RUB': 'рубль', 'CNY': 'юань', 'PLN': 'злотый',
-                        'BTC': 'биткоин'}
-        tracking_dol = {'EUR': 'евро', 'UAH': 'гривна',
-                        'RUB': 'рубль', 'CNY': 'юань', 'PLN': 'злотый',
-                        'BTC': 'биткоин'}
+        tracking = {
+            'EUR': {'USD': 'доллар', 'UAH': 'гривна', 'RUB': 'рубль',
+                    'CNY': 'юань', 'PLN': 'злотый', 'BTC': 'биткоин'},
+            'USD': {'EUR': 'евро', 'UAH': 'гривна', 'RUB': 'рубль',
+                    'CNY': 'юань', 'PLN': 'злотый', 'BTC': 'биткоин'}}
         course_currencies = json.loads(cash.get('course_currencies'))
-        list_tracking = 'Курс за 1 евро\n-----------------\n'
-        for item in tracking_eur.keys():
-            cours = course_currencies['rates'][f'{item}']
-            if item == 'BTC':
-                list_tracking += item + " " + str(
-                    round(1 / cours)) + ' € за биткоин'
-                continue
-            list_tracking += item + " " + str(
-                round(1 / course_currencies['rates']['EUR'] * cours,
-                      2)) + ' ' + tracking_eur[f'{item}'] + '\n'
-        list_tracking += '\n\n*****************\n\nКурс за 1 доллар\n-----------------\n'
-        for item_2 in tracking_dol.keys():
-            cours = course_currencies['rates'][f'{item_2}']
-            if item_2 == 'BTC':
-                list_tracking += item_2 + " " + str(round(
-                    1 / cours * course_currencies['rates'][
-                        'USD'])) + ' $ за биткоин'
-                continue
-            list_tracking += item_2 + " " + str(
-                round(1 / course_currencies['rates']['USD'] * cours,
-                      2)) + ' ' + tracking_dol[f'{item_2}'] + '\n'
-        return list_tracking
+        result = ''
+        for base_currency, currencies in tracking.items():
+            result += f'Курс за 1 {base_currency.lower()}\n-----------------\n'
+            for currency, name in currencies.items():
+                cours = course_currencies['rates'][currency]
+                if currency == 'BTC':
+                    result += f'{currency} {round(1 / cours)} {base_currency} за биткоин\n'
+                else:
+                    result += f'{currency} {round(1 / course_currencies["rates"][base_currency] * cours, 2)} {name}\n'
+            result += '\n\n*****************\n\n'
+
+        return result
 
     @staticmethod
     def get_values():
